@@ -1,0 +1,54 @@
+create database example;
+use example;
+
+create table employees(
+name varchar(20),
+ssn int(20) not null,
+salary decimal(10,2),
+dno int(10) NULL,
+super_ssn int(20),
+primary key(ssn),
+foreign key (super_ssn) references employees (ssn)
+);
+
+create table department (
+dname varchar(20),
+dno int(10) not null,
+total_sal decimal(10,2),
+manager_ssn int(20),
+foreign key (manager_ssn) references  employees (ssn),
+primary key(dno)
+);
+
+DELIMITER $$
+create trigger Total_sal1
+after insert on employees
+for each row
+	if  (new.dno is not null) then
+		update department
+		set total_sal = total_sal+new.salary
+		where dno= new.dno;
+end if;
+end $$
+DELIMITER ;
+
+
+ALTER TABLE employees  ADD CONSTRAINT fk_dno FOREIGN KEY (dno) REFERENCES department(dno);
+
+ALTER TABLE employee DROP FOREIGN KEY fk_dno
+
+
+insert into employees values("brunda",1,2000,NULL,1)
+
+-- insert into department values("CSE",1,0,1)
+-- insert into department values("Mechanical",2,0,2)
+insert into department values("Mechanical",2,0,2) 
+
+
+-- insert into employees values("shravya",2,3000,1,1)
+-- insert into employees values("vidya",3,4000,1,1)
+-- insert into employees values("avin",4,15000,2,4)
+insert into employees values("karthik",5,3000,2,4)
+
+select * from department
+
